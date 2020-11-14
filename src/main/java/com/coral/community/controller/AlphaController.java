@@ -11,7 +11,7 @@ import org.springframework.web.context.annotation.RequestScope;
 @RequestMapping("/alpha")
 public class AlphaController {
 
-    // interact with the front end
+    // interact with the  front end
     @RequestMapping("/hello")
     @ResponseBody   // indicate the content/string of return will be put in ResponseBody rather than return part of the url, and show in front end
     public String sayHello(){
