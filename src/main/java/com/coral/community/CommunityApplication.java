@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
-@SpringBootApplication
+@SpringBootApplication   // indicate this is a config file
 public class CommunityApplication {
 
 	public static void main(String[] args) {
