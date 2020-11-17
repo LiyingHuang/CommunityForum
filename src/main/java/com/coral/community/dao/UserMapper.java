@@ -5,14 +5,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 
-@Mapper                       //@Mapper (MyBatis, required)
+@Mapper //@Mapper (MyBatis, required), enable the Spring Container to scan the interface and then load / implement
 @Repository                   //@Repository (spring, optional),
 public interface UserMapper{
     // we need to create a configuration file for UserMapper to be used ( resource/mapper/user-mapper.xml)
     // config file need to provide server for each method
     // after config, MyBatis will generate the implementation class automatically at the bottom
 
-    /* Get User by ID */
+    /* Get User by ID */  // declare the method then write the corresponding sql in the config file resource/mapper/user-mapper
     User selectById(int id);
     /* Get User by name */
     User selectByName(String username);

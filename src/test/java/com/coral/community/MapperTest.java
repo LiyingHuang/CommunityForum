@@ -1,6 +1,8 @@
 package com.coral.community;
 
+import com.coral.community.dao.DiscussPostMapper;
 import com.coral.community.dao.UserMapper;
+import com.coral.community.entity.DiscussPost;
 import com.coral.community.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -18,8 +21,8 @@ public class MapperTest {
     @Autowired
     private UserMapper userMapper;
 
-
-    /* -----------------------GET-----------------------*/
+    /* -----------------------User-Mapper-----------------------*/
+    /* -------GET------*/
     @Test
     public void testSelectUser(){
 
@@ -33,7 +36,7 @@ public class MapperTest {
         System.out.println(user);
     }
 
-    /* ------------------------ADD-----------------------*/
+    /* -------ADD-----*/
     @Test
     public void testInsertUser(){
         User user = new User();
@@ -49,7 +52,7 @@ public class MapperTest {
         System.out.println(user.getId());
     }
 
-    /* ---------------------UPDATE-----------------------*/
+    /* ------UPDATE------*/
     @Test
     public void updateUser() {
 
@@ -61,4 +64,27 @@ public class MapperTest {
 
         rows = userMapper.updatePassword(150, "123456");
     }
+
+    /* -----------------------DiscussPost-Mapper-----------------------*/
+
+    @Autowired
+    private DiscussPostMapper discussPostMapper;
+    @Test
+    public void testSelectPosts(){
+        List<DiscussPost> postList = discussPostMapper.selectDiscussPosts(0,0,10);
+        for(DiscussPost post : postList){
+            System.out.println(post);
+        }
+
+        // select count(id) from discuss_post where status !=2
+        int rows = discussPostMapper.selectDiscussionPostRows(0);
+        System.out.println(rows);
+
+        // select count(id) from discuss_post where status !=2 and user_id = #{userId}
+        int row = discussPostMapper.selectDiscussionPostRows(102);
+        // select count(id) from discuss_post where status !=2 and user_id = 101
+        System.out.println(row);
+    }
+
 }
+
