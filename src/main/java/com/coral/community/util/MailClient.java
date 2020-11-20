@@ -15,7 +15,8 @@ public class MailClient {
     private static final Logger logger = LoggerFactory.getLogger(MailClient.class);
 
     @Autowired
-    private JavaMailSender javaMailSender; // JavaMailSender interface/Component is manage by  Spring Container, so we can inject directly
+    private JavaMailSender javaMailSender;
+    // JavaMailSender interface/Component is manage by  Spring Container, so we can inject directly
 
     /*  ---------Sender/title/subject are the same--------  */
     @Value("${spring.mail.username}")

@@ -30,9 +30,10 @@ public class MailTest {
     public void testHtmlMail(){
         /* 1. generate dynamic Html by thymeleaf */
         Context context = new Context(); // use thymeleaf Context to
-        context.setVariable("username", "Sunny"); // set value of username
-        String content = templateEngine.process("/mail/demo", context); // generate dynamic Html by thymeleaf
+        context.setVariable("username", "Sunny"); // set value of username which exits in the front end
+        String content = templateEngine.process("/mail/demo", context); // generate dynamic Html by thymeleaf  resource/templates/mail/demo
         System.out.println(content);
+
         /* 2. send Html mail*/
         mailClient.sendMail("jiahao.quan@me.com", "hi", content);
 //<!DOCTYPE html>
