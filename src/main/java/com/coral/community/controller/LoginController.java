@@ -3,7 +3,10 @@ package com.coral.community.controller;
 import com.coral.community.entity.User;
 import com.coral.community.service.UserService;
 import com.coral.community.util.CommunityConstant;
+import com.google.code.kaptcha.Producer;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 @Controller
@@ -75,6 +84,29 @@ public class LoginController implements CommunityConstant {
     }
 
 
+    // the generate picture will be used in the client, but the code should be saved in the server with session
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    @Autowired
+    private Producer kaptchaProducer;
+    @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
+    public void getKaptcha(HttpServletResponse response, HttpSession session){
+        // 1. create verification code
+        String text = kaptchaProducer.createText();
+        // 2.  create picture with verification code
+        BufferedImage image = kaptchaProducer.createImage(text);
+
+        // 3. verification code store in session
+        session.setAttribute("kaptcha", text);
+
+        // 4. picture send to browser. need declare the type of output
+        response.setContentType("image/png");
+        try {
+            OutputStream os = response.getOutputStream();
+            ImageIO.write(image, "png", os); // dont need close, spring will do that
+        } catch (IOException e) {
+            logger.error("response verification code Failure: " + e.getMessage());
+        }
+    }
 
 
 }
