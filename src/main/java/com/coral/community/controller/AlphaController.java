@@ -1,6 +1,7 @@
 package com.coral.community.controller;
 
 import com.coral.community.service.AlphaService;
+import com.coral.community.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.parsing.PassThroughSourceExtractor;
 import org.springframework.stereotype.Controller;
@@ -9,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
@@ -218,4 +221,47 @@ public class AlphaController {
         // ]
 
     }
+
+    /*Cookie is a txt file which is created and sent by the serve, store in the client side*/
+    @RequestMapping(path="/cookie/set",method = RequestMethod.GET)
+    @ResponseBody
+    public String setCookie(HttpServletResponse response){
+        // 1. create cookie
+        Cookie cookie = new Cookie("code", CommunityUtil.generateUUID());
+        // 2. set cookie active range
+        cookie.setPath("/community/alpha");
+        // 3. active time(default: close the page, cookie disappear)
+        cookie.setMaxAge(60*10); // 10min
+        // 4. add cookie to response object, then send
+        response.addCookie(cookie);
+        return "set cookie";
+    }
+
+    @RequestMapping(path="/cookie/get",method = RequestMethod.GET)
+    @ResponseBody
+    public String getCookie(@CookieValue("code") String code){
+        System.out.println(code);
+        return "get cookie";
+    }
+
+    /* Session, can be generate by springMVC, we can injection*/
+    @RequestMapping(path="/session/set",method = RequestMethod.GET)
+    @ResponseBody
+    public String setSession(HttpSession session){
+        session.setAttribute("id",1);
+        session.setAttribute("name","test");
+        return "set session";
+        // client => Set-Cookie: JSESSIONID=27E19375058C7B60FD4E8EFF46B17411; Path=/community; HttpOnly
+    }
+
+    @RequestMapping(path="/session/get",method = RequestMethod.GET)
+    @ResponseBody
+    public void getSession(HttpSession session){
+        System.out.println(session.getAttribute("id"));
+        System.out.println(session.getAttribute("name"));
+    }
+
+    /* DistributeSystem(multiple server): Session is not good，
+     * as there are many session, we might access another session the next time
+     * */
 }

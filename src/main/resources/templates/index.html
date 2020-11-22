@@ -34,8 +34,10 @@
 							<li class="nav-item ml-3 btn-group-vertical">
 								<a class="nav-link" th:href="@{/register}">SignUp</a>
 							</li>
+							<!--config login in index.page with th-->
 							<li class="nav-item ml-3 btn-group-vertical">
-								<a class="nav-link" href="site/login.html">SignIn</a>
+								<!--<a class="nav-link" href="site/login.html">SignIn</a>-->
+								<a class="nav-link" th:href="@{/login}">SignIn</a>
 							</li>
 							<li class="nav-item ml-3 btn-group-vertical dropdown">
 								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -181,7 +183,7 @@
 
 		<!-- Footer -->
 <!--        reuse the footer part in multiple html file by thymeleaf->th:fragment="header"-->
-		<footer class="bg-dark" th:fragment="fotter">
+		<footer class="bg-dark" th:fragment="footer">
 			<div class="container">
 				<div class="row">
 						<!-- QR code -->
