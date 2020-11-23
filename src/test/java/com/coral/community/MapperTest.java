@@ -1,8 +1,10 @@
 package com.coral.community;
 
 import com.coral.community.dao.DiscussPostMapper;
+import com.coral.community.dao.LoginTicketMapper;
 import com.coral.community.dao.UserMapper;
 import com.coral.community.entity.DiscussPost;
+import com.coral.community.entity.LoginTicket;
 import com.coral.community.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,6 +87,33 @@ public class MapperTest {
         // select count(id) from discuss_post where status !=2 and user_id = 101
         System.out.println(row);
     }
+
+
+    /* -----------------------loginTicket-Mapper-----------------------*/
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
+
+    @Test
+    public void testInsertLoginTicket(){
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setId(1111);
+        loginTicket.setTicket("abc");
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + 1000 * 60 * 10));
+
+        loginTicketMapper.insertLoginTicket(loginTicket);
+    }
+
+    @Test
+    public void testSelectByTicket(){
+        loginTicketMapper.selectByTicket("abcd");
+    }
+
+    @Test
+    public void testUpdateStatus(){
+        loginTicketMapper.updateStatus("abcd",1);
+    }
+
 
 }
 

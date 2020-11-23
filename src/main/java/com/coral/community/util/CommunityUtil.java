@@ -23,6 +23,7 @@ public class CommunityUtil {
         }
         // call the DigestUtils from Spring, need pass into bytes,return Hex
         return DigestUtils.md5DigestAsHex(key.getBytes());
-
     }
+
+
 }

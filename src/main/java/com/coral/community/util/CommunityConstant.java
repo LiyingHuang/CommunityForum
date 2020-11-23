@@ -9,4 +9,10 @@ public interface CommunityConstant {
     /* Activate Failure */
     int ACTIVATION_FAILURE = 1;
 
+    /* Remember Me or Not */
+    // 1. default ( Not Remember)
+    int DEFAULT_EXPIRED_TIME= 3600 * 12; // 3600s * 12 -> 12h
+    // 2. Remember
+    int REMEMBER_EXPIRED_TIME = 3600 * 12 * 100; // 100 DAYS
+
 }

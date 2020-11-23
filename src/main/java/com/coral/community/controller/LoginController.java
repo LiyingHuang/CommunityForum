@@ -8,13 +8,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
@@ -108,5 +110,47 @@ public class LoginController implements CommunityConstant {
         }
     }
 
+
+    /* -----------------Login(Post)----------------- */
+
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+
+    @RequestMapping(path = "/login", method = RequestMethod.POST)
+    public String login(String username, String password,String code, boolean rememberMe,
+                        Model model, HttpSession session, HttpServletResponse response){    // code: verificationCode
+        String kaptcha = (String) session.getAttribute("kaptcha");
+        if(StringUtils.isBlank(kaptcha)  || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)){
+            model.addAttribute("codeMsg","Verification Code Incorrect!");
+            return "/site/login";
+        }
+
+        // check username,password,expired time
+        // rememberMe: expired time become longer (both store in db, later in Redis) -> util/CommunityConstant
+        int expiredSecond = rememberMe ? REMEMBER_EXPIRED_TIME : DEFAULT_EXPIRED_TIME;
+
+        Map<String, Object> map = userService.login(username, password, expiredSecond);
+        // success
+        if(map.containsKey("ticket")){
+            Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
+            cookie.setPath(contextPath); // set active path/range
+            cookie.setMaxAge(expiredSecond);
+            response.addCookie(cookie); // send cookie to browser/page by response to show it on the inspect
+            return "redirect:/index";   // redirect
+        }else{
+            // Model: need to show something on page/html, cause html will use the thymeleaf Model Engine to do it
+            // send errorMsg to page by Model
+            model.addAttribute("usernameMsg",map.get("usernameMsg"));
+            model.addAttribute("passwordMsg",map.get("passwordMsg"));
+            return "/site/login";
+        }
+    }
+
+    /* -----------------LogOut----------------- */
+    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+    public String logout(@CookieValue("ticket") String ticket){
+        userService.logout(ticket);
+        return "redirect:/login";
+    }
 
 }
