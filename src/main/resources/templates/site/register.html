@@ -79,7 +79,9 @@
 							<input type="text"
 								   th:class="|form-control ${usernameMsg!=null?'is-invalid':''}|"
 								   th:value="${user!=null?user.username:''}"
-								   id="username" name="username" placeholder="Please enter your username!" required>
+								   id="username"
+								   name="username"
+								   placeholder="Please enter your username!" required>
 							<div class="invalid-feedback" th:text="${usernameMsg}">
 							<!--th:text="${usernameMsg}":make the following sentence dynamic-->
 								This-uSernAme-aLready-exists!

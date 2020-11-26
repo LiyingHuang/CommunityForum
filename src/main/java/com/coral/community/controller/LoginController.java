@@ -111,7 +111,7 @@ public class LoginController implements CommunityConstant {
     }
 
 
-    /* -----------------Login(Post)----------------- */
+    /* ---------------------------------Login(Post)--------------------------------------------- */
 
     @Value("${server.servlet.context-path}")
     private String contextPath;

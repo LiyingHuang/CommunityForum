@@ -11,9 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -141,7 +141,7 @@ public class UserService implements CommunityConstant {
     }
     // -> loginController
 
-    /*--------------------Login------------------ */
+    /*----------------------------------- Login --------------------------------------- */
     // as there are kinds of siutations can leads to loginFailure, so we return map
     // front end: password   sever: encrypted password
     @Autowired
@@ -208,5 +208,43 @@ public class UserService implements CommunityConstant {
     /*---------------------update Header-------------- */
     public int updateHeader(int userId, String headerUrl){
         return userMapper.updateHeader(userId, headerUrl);
+    }
+
+
+    /*--------------------Change Password------------------ */
+    public Map<String, Object> changePassword(String prePassword, String newPassword, String confirmPassword, User user){
+        Map<String, Object> map = new HashMap<>();
+        // 1. null value
+        if(StringUtils.isBlank(prePassword)) {
+            map.put("prePasswordMsg","Previous password can not be null!");
+            return map;
+        }
+        if(StringUtils.isBlank(newPassword)) {
+            map.put("newPasswordMsg","New password can not be null!");
+            return map;
+        }
+        if(StringUtils.isBlank(confirmPassword)) {
+            map.put("confirmPasswordMsg","Confirmed password can not be null!");
+            return map;
+        }
+
+        // 2. Validate the password by compare with the dataset data
+        String password = user.getPassword();
+
+        prePassword = CommunityUtil.md5(prePassword + user.getSalt());
+
+        if(!password.equals(prePassword)){
+            map.put("prePasswordMsg","Previous password doesn't correct!");
+            return map;
+        }
+
+        if(!newPassword.equals(confirmPassword)){
+            map.put("confirmPasswordMsg","Confirmed password doesn't the same with the New Password!");
+            return map;
+        }
+
+        // 3. update the password
+        userMapper.updatePassword(user.getId(),CommunityUtil.md5(newPassword+user.getSalt()));
+        return map;
     }
 }
