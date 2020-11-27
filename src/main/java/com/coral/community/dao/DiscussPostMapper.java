@@ -22,4 +22,10 @@ public interface DiscussPostMapper {
     // @Param("NickName")
     // if we need concat userId dynamically within <If>, and there are only one parameter, we have to use @Param
     int selectDiscussionPostRows(@Param("userId") int userId);
+
+
+    /*-----------------------add Post with ajax and Jquery-----------------------*/
+    int insertDiscussPost(DiscussPost discussPost);
+    // implement it in mapper
+
 }

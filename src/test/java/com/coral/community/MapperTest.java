@@ -115,5 +115,19 @@ public class MapperTest {
     }
 
 
+    /* -----------------------add Post with ajax and Jquery Test-----------------------*/
+    @Test
+    public void testAddPost(){
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setTitle("Find Job !!!!!!");
+        discussPost.setContent("aaàáâäzaaaaaaaa");
+        discussPost.setStatus(1);
+        discussPost.setType(1);
+        discussPost.setCreateTime(new Date());
+        System.out.println(new Date());
+        discussPostMapper.insertDiscussPost(discussPost);
+    }
+
+
 }
 

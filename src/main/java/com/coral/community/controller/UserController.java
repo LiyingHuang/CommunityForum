@@ -1,5 +1,6 @@
 package com.coral.community.controller;
 
+import com.coral.community.annotation.LoginRequired;
 import com.coral.community.entity.User;
 import com.coral.community.service.UserService;
 import com.coral.community.util.CommunityUtil;
@@ -32,6 +33,7 @@ import java.util.Map;
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getSettingPage(){
         return "/site/setting";
@@ -53,6 +55,7 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
+    @LoginRequired
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model){
         if(headerImage == null){
@@ -113,7 +116,7 @@ public class UserController {
     }
 
     /*----------------------------Change Password----------------------------*/
-
+    @LoginRequired
     @RequestMapping(path = "/changepassword", method = RequestMethod.POST)
     public String changePassword(String prePassword, String newPassword, String confirmPassword,
                                  Model model, @CookieValue("ticket") String ticket){

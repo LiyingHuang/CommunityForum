@@ -264,4 +264,18 @@ public class AlphaController {
     /* DistributeSystem(multiple server): Session is not good，
      * as there are many session, we might access another session the next time
      * */
+
+
+    /*----------demo about ajax(asynchronous javaScript and XML/JSON)---------------*/
+    @RequestMapping(path="/ajax", method = RequestMethod.POST)
+    @ResponseBody // return string, not html
+    public String testAjax(String name, int age){
+        System.out.println(name);
+        System.out.println(age);
+        return CommunityUtil.getJSONString(0,"success!");
+    }
+    // then create a html page with jquery code: -> resource/static/html/ajax demo.html/
+
+
+
 }

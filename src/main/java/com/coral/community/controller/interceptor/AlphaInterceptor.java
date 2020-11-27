@@ -33,4 +33,24 @@ public class AlphaInterceptor implements HandlerInterceptor {
     }
 
     // Then need config: config/webMvcConfig to use it
+
+
+
+/*
+/----------------------- we can also use customized annotation to use Interceptor -------------------------------/
+* 1. use Interceptor
+*    a. declare customized annotation before the method
+*    b. intercept all request, only process methods with annotation
+* 2. customized annotation
+*    * @Target : declare the active part(method/field/class) of the annotation
+*    * @Retention : active time(compile/runtime)
+*    * @Document
+*    * @Inherited : subclass inherited from parent class with customized annotation, declare inherit the annotation or not
+* 3. how to read the annotation (Reflection)
+*   * Method.getDeclaredAnnotations()
+*   * Method.getAnnotation(Class<T> annotationClass)
+
+* */
+
+
 }
