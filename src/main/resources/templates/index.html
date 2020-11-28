@@ -142,7 +142,7 @@
 						<div class="media-body">
 							<h6 class="mt-0 mb-3">
                                 <!--<a href="site/discuss-detail.html">Get a new job in a month!!!</a>-->
-								<a href="#" th:utext="${map.post.title}">Get a new job in a month!!!</a>
+								<a th:href="@{|/discuss/detail/${map.post.id}|}" th:utext="${map.post.title}">Get a new job in a month!!!</a>
 
                                 <!--need determine whether the post is top or essence-->
 

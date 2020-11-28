@@ -24,7 +24,6 @@ public class HomeController {
     private UserService userService;
 
     /* GET 10 Page */
-
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public String getIndexPage(Model model, Page page){
         page.setRows(discussPostService.findDiscussPostRows(0)); // get the total rows

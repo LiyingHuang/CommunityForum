@@ -28,4 +28,18 @@ public interface DiscussPostMapper {
     int insertDiscussPost(DiscussPost discussPost);
     // implement it in mapper
 
+    /*-----------------------get posts by post Id-----------------------*/
+    /* -----Details of the Post Content------
+     * DiscussPostMapper DiscussPostService DiscussPostController
+     * index.html: add the post content url/path in the index html
+     * discuss-detail.html
+     *  * handle the utl/path of the static resource
+     *  * reuse header
+     *  * show the post title, user, post_time,content
+     * */
+    DiscussPost selectDiscussPostById(int id);
+    // then go to mapper.xml write the query
+
+
+
 }

@@ -25,12 +25,12 @@ public class DiscussPostService {
     }
 
 
-    /* */
+    /* --------------------------------find Discuss Post Rows------------------------------*/
     public int findDiscussPostRows(int userId){
         return discussPostMapper.selectDiscussionPostRows(userId);
     }
 
-    /* add post */
+    /* -----------------------------------add post---------------------------------------- */
     @Autowired
     private SensitiveFilter sensitiveFilter;
     public int addDisscussPost(DiscussPost discussPost){
@@ -46,8 +46,11 @@ public class DiscussPostService {
         discussPost.setContent(sensitiveFilter.filter(discussPost.getContent()));
 
         return discussPostMapper.insertDiscussPost(discussPost);
+    }
 
-
+    /* -----------------------------------post content detail----------------------------------*/
+    public DiscussPost findDiscussPostById(int id){
+        return discussPostMapper.selectDiscussPostById(id);
     }
 
 }
