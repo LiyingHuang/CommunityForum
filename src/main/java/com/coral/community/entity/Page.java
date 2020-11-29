@@ -4,16 +4,19 @@ package com.coral.community.entity;
 *  Encapsulate Paging-related Information
 * */
 public class Page {
+    // receive data
     private int current = 1;  // current page
-    private int limit = 10;
-    private  int rows;  // used to calculate the the total pages
-    private String path; // each page corresponding a url
+    private int limit = 10;   // post quantity of a page
+    // return to front end
+    private int rows;         // used to calculate the the total pages
+    private String path;      // each page can click so each of them corresponding a url
 
     public int getCurrent() {
         return current;
     }
 
     public void setCurrent(int current) {
+        // exclude the 0 and negative
         if(current >= 1){
             this.current = current;
         }
@@ -24,6 +27,7 @@ public class Page {
     }
 
     public void setLimit(int limit) {
+        // one page show 1-100 posts is valid
         if(limit >=1 && limit <= 100){
             this.limit = limit;
         }

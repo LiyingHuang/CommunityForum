@@ -1,8 +1,10 @@
 package com.coral.community;
 
+import com.coral.community.dao.CommentMapper;
 import com.coral.community.dao.DiscussPostMapper;
 import com.coral.community.dao.LoginTicketMapper;
 import com.coral.community.dao.UserMapper;
+import com.coral.community.entity.Comment;
 import com.coral.community.entity.DiscussPost;
 import com.coral.community.entity.LoginTicket;
 import com.coral.community.entity.User;
@@ -128,6 +130,19 @@ public class MapperTest {
         discussPostMapper.insertDiscussPost(discussPost);
     }
 
+    /*---------------------------------------Comment Mapper--------------------------------------*/
+    @Autowired
+    private CommentMapper commentMapper;
 
+    @Test
+    public void testCommentMapper(){
+        // List<Comment> selectCommentsByEntity(int entityType, int entityId, int offset, int limit);
+        List<Comment> commentList= commentMapper.selectCommentsByEntity(1,275,0,5);
+        System.out.println(commentList);
+
+        //int selectCountByEntity(int entityType, int entityId);
+        int count = commentMapper.selectCountByEntity(1,275);
+        System.out.println(count);
+    }
 }
 

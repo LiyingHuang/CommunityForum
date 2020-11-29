@@ -15,4 +15,10 @@ public interface CommunityConstant {
     // 2. Remember
     int REMEMBER_EXPIRED_TIME = 3600 * 12 * 100; // 100 DAYS
 
+
+    /* Entity Type (Comment on post/comment)*/
+    // post
+    int ENTITY_TYPE_POST = 1;
+    // comment
+    int ENTITY_TYPE_COMMENT = 2;
 }
