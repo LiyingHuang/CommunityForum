@@ -20,13 +20,28 @@ import java.util.Date;
  * */
 
 public class Comment {
-    private int id;
-    private int userId;
+    private  int id;
+    private  int userId;
     private int entityType;
+    private int entityId;
     private int targetId;
     private String content;
     private int status;
     private Date createTime;
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", entityType=" + entityType +
+                ", entityId=" + entityId +
+                ", targetId=" + targetId +
+                ", content='" + content + '\'' +
+                ", status=" + status +
+                ", createTime=" + createTime +
+                '}';
+    }
 
     public int getId() {
         return id;
@@ -50,6 +65,14 @@ public class Comment {
 
     public void setEntityType(int entityType) {
         this.entityType = entityType;
+    }
+
+    public int getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(int entityId) {
+        this.entityId = entityId;
     }
 
     public int getTargetId() {
@@ -82,18 +105,5 @@ public class Comment {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", entityType=" + entityType +
-                ", targetId=" + targetId +
-                ", content='" + content + '\'' +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                '}';
     }
 }

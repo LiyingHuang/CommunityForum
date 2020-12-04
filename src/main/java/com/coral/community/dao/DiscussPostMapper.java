@@ -44,5 +44,6 @@ public interface DiscussPostMapper {
     // then go to mapper.xml write the query
 
 
+    int updateCommentCount(int id, int commentCount);
 
 }

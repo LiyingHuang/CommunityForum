@@ -2,12 +2,18 @@ package com.coral.community.service;
 
 import com.coral.community.dao.CommentMapper;
 import com.coral.community.entity.Comment;
+import com.coral.community.util.CommunityConstant;
+import com.coral.community.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 import java.util.List;
 
 @Service
-public class CommentService {
+public class CommentService implements CommunityConstant {
 
     @Autowired
     private CommentMapper commentMapper;
@@ -20,5 +26,27 @@ public class CommentService {
         return commentMapper.selectCountByEntity(entityType,entityId);
     }
 
-    // discussPostController
+
+
+    @Autowired
+    private SensitiveFilter sensitiveFilter;
+    @Autowired
+    private DiscussPostService discussPostService;
+    // with Transaction
+    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
+    public int addComment(Comment comment){
+        if(comment == null){
+            throw new IllegalArgumentException("can not be null!");
+        }
+        // add comment
+        comment.setContent(HtmlUtils.htmlEscape(comment.getContent())); // htmlEscape:remove #
+        comment.setContent(sensitiveFilter.filter(comment.getContent()));
+        int rows = commentMapper.insertComment(comment);
+        // update post's count (not reply)
+        if(comment.getEntityType() == ENTITY_TYPE_POST){
+            int count = commentMapper.selectCountByEntity(comment.getEntityType(),comment.getEntityId());
+            discussPostService.updateCommentCount(comment.getEntityId(),count);
+        }
+        return rows;
+    }
 }

@@ -1,13 +1,7 @@
 package com.coral.community;
 
-import com.coral.community.dao.CommentMapper;
-import com.coral.community.dao.DiscussPostMapper;
-import com.coral.community.dao.LoginTicketMapper;
-import com.coral.community.dao.UserMapper;
-import com.coral.community.entity.Comment;
-import com.coral.community.entity.DiscussPost;
-import com.coral.community.entity.LoginTicket;
-import com.coral.community.entity.User;
+import com.coral.community.dao.*;
+import com.coral.community.entity.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,8 +135,51 @@ public class MapperTest {
         System.out.println(commentList);
 
         //int selectCountByEntity(int entityType, int entityId);
-        int count = commentMapper.selectCountByEntity(1,275);
-        System.out.println(count);
     }
+    @Test
+    public void testCommentCount(){
+        System.out.println(commentMapper.selectCountByEntity(1,275));
+    }
+    @Test
+    public void testInsertComment(){
+        Comment comment = new Comment();
+        comment.setCreateTime(new Date());
+        commentMapper.insertComment(comment);
+    }
+
+    @Test
+    public void testUpdateCommentCount(){
+        discussPostMapper.updateCommentCount(286,1);
+    }
+
+
+    @Autowired
+    private MessageMapper messageMapper;
+    @Test
+    public void testSelectLetters(){
+        List<Message> list = messageMapper.selectConversations(111,0,20);
+        for(Message message : list){
+            System.out.println(message);
+        }
+    }
+    @Test
+    public void testSelectConversationCount(){
+        int i = messageMapper.selectConversationCount(111);
+        System.out.println(i);
+
+        List<Message> list = messageMapper.selectLetters("111_112",0,10);
+        System.out.println(list);
+
+        int count = messageMapper.selectLetterCount("111_112");
+        System.out.println(count);
+
+        count = messageMapper.selectLetterUnreadCount(131,"111_131");
+        System.out.println(count);
+
+    }
+
+
+
+
 }
 

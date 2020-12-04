@@ -51,4 +51,11 @@
         where id = #{id}
     </select>
 <!--    then go to service -->
+
+
+    <!--    update comment count-->
+
+    <update id="updateCommentCount">
+        update discuss_post set comment_count=#{commentCount} where id=#{id}
+    </update>
 </mapper>

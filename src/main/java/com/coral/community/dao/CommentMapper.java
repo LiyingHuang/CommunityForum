@@ -19,4 +19,8 @@ public interface CommentMapper {
 
     // get/find count/quantity of comment according to entity
     int selectCountByEntity(int entityType, int entityId);
+
+    // add comment
+    int insertComment(Comment comment);
+
 }

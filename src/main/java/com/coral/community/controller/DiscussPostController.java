@@ -110,14 +110,14 @@ public class DiscussPostController implements CommunityConstant {
                         replyVo.put("user", userService.findUserById(reply.getUserId()));
 
                         // choose reply a post or user
-                        User target = reply.getTargetId() == 0 ? null : userService.findUserById(reply.getTargetId());
+                        User target = reply.getTargetId() == 0?null:userService.findUserById(reply.getTargetId());
                         replyVo.put("target",target);
 
                         replyVoList.add(replyVo);
                     }
                 }
 
-                commentVo.put("replys", replyList);
+                commentVo.put("replys", replyVoList);
                 // reply quantity
                 int replyCount = commentService.findCommentCount(ENTITY_TYPE_COMMENT,comment.getId());
                 commentVo.put("replyCount",replyCount);
