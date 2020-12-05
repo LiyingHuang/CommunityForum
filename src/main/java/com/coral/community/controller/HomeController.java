@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,5 +51,10 @@ public class HomeController {
         model.addAttribute("discussPosts", discussPosts);// data that will display on the front end need to store in Model with a name
         model.addAttribute("page",page);
         return "/index";
+    }
+
+    @RequestMapping(path = "/error", method = RequestMethod.GET)
+    public String getErrorPage(){
+        return "/error/500";
     }
 }

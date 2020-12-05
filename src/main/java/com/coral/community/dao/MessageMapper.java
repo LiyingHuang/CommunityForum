@@ -32,4 +32,12 @@ public interface MessageMapper {
     // with conversationId: count the unread of a specific conversation
     // without conversationId: count the total unread of a user/all the conversationId
     int selectLetterUnreadCount(int userId, String conversationId);
+
+    // 6
+    // insert message to db
+    int insertMessage(Message message);
+
+    // 7
+    // change message status (unread -> read)
+    int updateStatus(List<Integer> ids, int status);
 }
