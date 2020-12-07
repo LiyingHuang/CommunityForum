@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 	<!--let thymeleaf find the file in: /static/css/global.css-->
 	<link rel="stylesheet" th:href="@{css/global.css}" />
-	<title>Coral-首页</title>
+	<title>CoralCommunity-HomePage</title>
 </head>
 <body>	
 	<div class="nk-container">
@@ -153,7 +153,9 @@
 
 								<u class="mr-3" th:utext="${map.user.username}">LIYING</u> posted <b th:text="${map.post.createTime}">2020-04-15 15:32:18</b>
 								<ul class="d-inline float-right">
-									<li class="d-inline ml-2">Like 11</li>
+									<li class="d-inline ml-2">
+										Like <span th:text="${map.likeCount}">11</span>
+									</li>
 									<li class="d-inline ml-2">|</li>
 									<li class="d-inline ml-2">
 										Reply

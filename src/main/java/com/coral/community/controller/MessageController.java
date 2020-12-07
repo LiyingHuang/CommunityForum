@@ -92,7 +92,7 @@ public class MessageController {
 
         model.addAttribute("target", getLetterTarget(conversationId));
 
-        // unread -> read
+        // unread0 -> read1
         List<Integer> ids = getLetterIds(letterList);
         if(!ids.isEmpty()){
             messageService.readMessage(ids);

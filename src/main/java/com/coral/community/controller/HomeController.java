@@ -4,7 +4,9 @@ import com.coral.community.entity.DiscussPost;
 import com.coral.community.entity.Page;
 import com.coral.community.entity.User;
 import com.coral.community.service.DiscussPostService;
+import com.coral.community.service.LikeService;
 import com.coral.community.service.UserService;
+import com.coral.community.util.CommunityConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,18 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller   // path can be ignore
-public class HomeController {
+public class HomeController implements CommunityConstant {
     @Autowired
     private DiscussPostService discussPostService;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LikeService likeService;
 
     /* GET 10 Page */
     @RequestMapping(path = "/index", method = RequestMethod.GET)
@@ -40,6 +42,11 @@ public class HomeController {
                 map.put("post", post);
                 User user = userService.findUserById(post.getUserId()); // get user
                 map.put("user", user);
+
+                // query post meanwhile query the like count
+               long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
+               map.put("likeCount",likeCount);
+
                 discussPosts.add(map);
             }
         }
