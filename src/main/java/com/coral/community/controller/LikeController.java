@@ -46,3 +46,14 @@ public class LikeController {
 
     }
 }
+
+
+/*
+*   FOLLOW
+*   Requirements:
+*                   * follow/ not follow function
+*                   * count user's followed / follower
+*   Key:
+*        * A follow B, A is the follower of B, B is the followee of A
+*        * Follow target can be User/Post/, we need to convert the target to Entity
+* */

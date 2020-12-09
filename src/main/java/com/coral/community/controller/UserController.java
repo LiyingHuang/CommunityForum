@@ -2,8 +2,10 @@ package com.coral.community.controller;
 
 import com.coral.community.annotation.LoginRequired;
 import com.coral.community.entity.User;
+import com.coral.community.service.FollowService;
 import com.coral.community.service.LikeService;
 import com.coral.community.service.UserService;
+import com.coral.community.util.CommunityConstant;
 import com.coral.community.util.CommunityUtil;
 import com.coral.community.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +33,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements CommunityConstant {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @LoginRequired
@@ -141,6 +143,10 @@ public class UserController {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
+    private FollowService followService;
+
+
     @RequestMapping(path = "/profile/{userId}",method = RequestMethod.GET)
     public String getProfilePage(@PathVariable("userId") int userId, Model model){
         User user = userService.findUserById(userId);
@@ -154,9 +160,27 @@ public class UserController {
         int likeCount = likeService.findUserLikeCount(userId);
         model.addAttribute("likeCount",likeCount);
 
+
+        // follow Count
+        long followeeCount = followService.findFolloweeCount(userId, ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount",followeeCount);
+
+
+        // follower count
+        long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER, userId);
+        model.addAttribute("followerCount",followerCount);
+
+        // follow status
+        boolean hasFollowed = false;
+        if(hostHolder.getUser() != null){
+            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), ENTITY_TYPE_USER, userId);
+        }
+        model.addAttribute("hasFollowed",hasFollowed);
+
         return "/site/profile";
 
     }
+
 
 
 }
