@@ -45,7 +45,7 @@
 									<img th:src="${loginUser.headerUrl}" class="rounded-circle" style="width:30px;"/>
 								</a>
 								<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-									<a class="dropdown-item text-center" href="site/profile.html">Profile</a>
+									<a class="dropdown-item text-center" th:href="@{|/user/profile/${loginUser.id}|}">Profile</a>
 									<a class="dropdown-item text-center" th:href="@{/user/setting}">Account Setting</a>
 									<a class="dropdown-item text-center"
 									   th:href="@{/logout}">Log Out
@@ -133,7 +133,7 @@
 					<!-- use thymeleaf th:each-"map:${ }}"(map: variable name/ user decide) implement loops, we need declare the loop content, "${content}" -->
 					<!-- ${content}, which we already set to model in the  controller/HomeController class-->
 					<li class="media pb-3 pt-3 mb-3 border-bottom" th:each="map:${discussPosts}">
-						<a href="site/profile.html">
+						<a th:href="@{|/user/profile/${map.user.id}|}">
 							<!--need danamically show the poster's header picture with thymeleaf-->
 							<!--<img src="http://images.nowcoder.com/head/1t.png" class="mr-4 rounded-circle" alt="用户头像" style="width:50px;height:50px;">-->
                             <!--map.user.headerUrl  auto-> map.getUser user.getHeaderUrl-->

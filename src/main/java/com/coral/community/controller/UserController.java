@@ -2,6 +2,7 @@ package com.coral.community.controller;
 
 import com.coral.community.annotation.LoginRequired;
 import com.coral.community.entity.User;
+import com.coral.community.service.LikeService;
 import com.coral.community.service.UserService;
 import com.coral.community.util.CommunityUtil;
 import com.coral.community.util.HostHolder;
@@ -134,5 +135,28 @@ public class UserController {
             return "site/setting";
         }
     }
+
+
+    /*----------------------------Profile----------------------------*/
+    @Autowired
+    private LikeService likeService;
+
+    @RequestMapping(path = "/profile/{userId}",method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model){
+        User user = userService.findUserById(userId);
+        if(user == null){
+            throw new RuntimeException("User Not Exist!");
+        }
+
+        // User
+        model.addAttribute("user",user);
+        // like count the user got
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount",likeCount);
+
+        return "/site/profile";
+
+    }
+
 
 }
