@@ -85,7 +85,9 @@
 							<button type="button"
 									th:class="|btn ${hasFollowed?'btn-secondary':'btn-info'} btn-sm float-right mr-5 follow-btn|"
 									th:text="${hasFollowed?'Followed':'Follow'}"
-									th:if="${loginUser!=null&&loginUser.id!=user.id}">Follow</button>
+									th:if="${loginUser!=null && loginUser.id!=user.id}">
+								Follow
+							</button>
 						</h5>
 						<div class="text-muted mt-3">
 							<span>注册于
@@ -96,8 +98,8 @@
 							</span>
 						</div>
 						<div class="text-muted mt-3 mb-5">
-							<span>  <a class="text-primary" href="followee.html" th:text="${followeeCount}">5</a> Followed</span>
-							<span class="ml-4">  <a class="text-primary" href="follower.html" th:text="${followerCount}">123</a> Follower</span>
+							<span>  <a class="text-primary" th:href="@{|/followees/${user.id}|}" th:text="${followeeCount}">5</a> Followed</span>
+							<span class="ml-4">  <a class="text-primary" th:href="@{|/followers/${user.id}|}" th:text="${followerCount}">123</a> Follower</span>
 							<span class="ml-4">Received <i class="text-danger" th:text="${likeCount}">87</i> Likes</span>
 						</div>
 					</div>
