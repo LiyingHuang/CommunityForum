@@ -208,6 +208,16 @@ public class MapperTest {
 
 
 
+    @Test
+    public void testNotification(){
+        System.out.println(messageMapper.selectLatestNotice(111,"comment"));
 
+    }
+
+    @Test
+    public void testNotices(){
+        System.out.println(messageMapper.selectNotices(111,"comment",0,5));
+
+    }
 }
 

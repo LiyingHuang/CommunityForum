@@ -52,7 +52,7 @@ public class EventConsumer implements CommunityConstant {
         // Send notification
         Message message = new Message();
         message.setFromId(SYSTEM_USER_ID);
-        message.setToId(event.getEntityId());
+        message.setToId(event.getEntityUserId());
         message.setConversationId(event.getTopic()); // Topic:string
         message.setCreateTime(new Date());
 

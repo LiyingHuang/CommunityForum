@@ -3,7 +3,6 @@ package com.coral.community.dao;
 import com.coral.community.entity.Message;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Mapper
@@ -40,4 +39,17 @@ public interface MessageMapper {
     // 7
     // change message status (unread -> read)
     int updateStatus(List<Integer> ids, int status);
+
+
+    // query the latest notification of a Type
+    Message selectLatestNotice(int userId, String topic);
+
+    // query the count of a notification Type
+    int selectNoticeCount(int userId, String topic);
+
+    // query all the count of unread notification
+    int selectNoticeUnreadCount(int userId, String topic);
+
+    // query the list of a Notification from a certain type
+    List<Message> selectNotices(int userId, String topic, int offset, int limit);
 }
