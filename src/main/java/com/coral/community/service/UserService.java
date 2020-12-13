@@ -7,9 +7,11 @@ import com.coral.community.entity.User;
 import com.coral.community.util.CommunityConstant;
 import com.coral.community.util.CommunityUtil;
 import com.coral.community.util.MailClient;
+import com.coral.community.util.RedisKeyUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.thymeleaf.TemplateEngine;
@@ -18,15 +20,30 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService implements CommunityConstant {
-    @Autowired
-    private UserMapper userMapper;
 
-    /* return one user */
-    public User findUserById(int id){
-        return userMapper.selectById(id);
+
+    // 1. Try to get data from Cache
+    private User getCache(int userId){
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        return (User) redisTemplate.opsForValue().get(redisKey);
+    }
+
+    // 2. store data in Redis Cache  when we can't get it from redis Cache
+    private User initCache(int userId){
+        User user = userMapper.selectById(userId);
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.opsForValue().set(redisKey,user,3600, TimeUnit.SECONDS);
+        return user;
+    }
+
+    // 3. delete the cache data when a data updated
+    private void clearCache(int userId){
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.delete(redisKey);
     }
 
     /*--------------------Register------------------ */
@@ -134,6 +151,7 @@ public class UserService implements CommunityConstant {
             return ACTIVATION_REPEAT;
         }else if(user.getActivationCode().equals(activationCode)){ // activationCode is right/ not fake activationCode
             userMapper.updateStatus(userId,1);
+            clearCache(userId);
             return ACTIVATION_SUCCESS;
         }else{
             return ACTIVATION_FAILURE;
@@ -144,8 +162,12 @@ public class UserService implements CommunityConstant {
     /*----------------------------------- Login --------------------------------------- */
     // as there are kinds of siutations can leads to loginFailure, so we return map
     // front end: password   sever: encrypted password
+
+//    @Autowired
+//    private LoginTicketMapper loginTicketMapper;
+
     @Autowired
-    private LoginTicketMapper loginTicketMapper;
+    private RedisTemplate redisTemplate;
 
     public Map<String, Object> login(String username, String password, int expiredSeconds){
         Map<String, Object> map = new HashMap<>();
@@ -183,7 +205,10 @@ public class UserService implements CommunityConstant {
         loginTicket.setTicket(CommunityUtil.generateUUID());
         loginTicket.setStatus(0);
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
-        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        //loginTicketMapper.insertLoginTicket(loginTicket);
+        String redisKey = RedisKeyUtil.getTicketKey(loginTicket.getTicket());
+        redisTemplate.opsForValue().set(redisKey,loginTicket); // Redis will serialize the loginTicket to a json string to store
 
         // 4. browser only need to memory the ticket
         map.put("ticket",loginTicket.getTicket());
@@ -194,20 +219,30 @@ public class UserService implements CommunityConstant {
     /*--------------------LogOut------------------ */
     // change status from 0 -> 1 (not active/validate)
     public void logout(String ticket){
-        loginTicketMapper.updateStatus(ticket,1);
+        //loginTicketMapper.updateStatus(ticket,1);
+        String redisKey = RedisKeyUtil.getTicketKey(ticket);
+        LoginTicket loginTicket = (LoginTicket) redisTemplate.opsForValue().get(redisKey);
+        loginTicket.setStatus(1);
+        redisTemplate.opsForValue().set(redisKey,loginTicket);
     }
 
 
 
     /*---------get LoginTicket object by ticket------- */
     public LoginTicket findLoginTicket(String ticket){
-        return loginTicketMapper.selectByTicket(ticket);
+        //return loginTicketMapper.selectByTicket(ticket);
+        String redisKey = RedisKeyUtil.getTicketKey(ticket);
+        return (LoginTicket) redisTemplate.opsForValue().get(redisKey);
     }
 
 
     /*---------------------update Header-------------- */
     public int updateHeader(int userId, String headerUrl){
-        return userMapper.updateHeader(userId, headerUrl);
+        //return userMapper.updateHeader(userId, headerUrl);
+        int rows = userMapper.updateHeader(userId, headerUrl);
+        clearCache(userId);
+        return rows;
+
     }
 
 
@@ -251,4 +286,22 @@ public class UserService implements CommunityConstant {
     public User findUserByName(String username){
         return userMapper.selectByName(username);
     }
+
+
+    // Optimize
+    @Autowired
+    private UserMapper userMapper;
+
+    /* return one user */
+    public User findUserById(int id){
+        // return userMapper.selectById(id);
+
+        User user = getCache(id);
+        if(user == null){
+            user = initCache(id);
+        }
+        return user;
+    }
+
+
 }

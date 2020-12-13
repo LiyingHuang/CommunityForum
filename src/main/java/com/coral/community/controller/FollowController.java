@@ -1,8 +1,10 @@
 package com.coral.community.controller;
 
 import com.coral.community.annotation.LoginRequired;
+import com.coral.community.entity.Event;
 import com.coral.community.entity.Page;
 import com.coral.community.entity.User;
+import com.coral.community.event.EventProducer;
 import com.coral.community.service.FollowService;
 import com.coral.community.service.UserService;
 import com.coral.community.util.CommunityConstant;
@@ -28,6 +30,9 @@ public class FollowController implements CommunityConstant {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @RequestMapping(path = "/follow", method = RequestMethod.POST)
     @ResponseBody
     @LoginRequired
@@ -36,6 +41,17 @@ public class FollowController implements CommunityConstant {
         User user =  hostHolder.getUser();
 
         followService.follow(user.getId(), entityType, entityId);
+
+
+        // "a" followed "you"
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId); // we can only follow user
+
+        eventProducer.fireEvent(event);
 
         return CommunityUtil.getJSONString(0,"Followed!");
     }
@@ -115,3 +131,6 @@ public class FollowController implements CommunityConstant {
     }
 
 }
+
+
+

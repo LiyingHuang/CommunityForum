@@ -74,15 +74,15 @@ public class MapperTest {
         for(DiscussPost post : postList){
             System.out.println(post);
         }
-
-        // select count(id) from discuss_post where status !=2
-        int rows = discussPostMapper.selectDiscussionPostRows(0);
-        System.out.println(rows);
-
-        // select count(id) from discuss_post where status !=2 and user_id = #{userId}
-        int row = discussPostMapper.selectDiscussionPostRows(102);
-        // select count(id) from discuss_post where status !=2 and user_id = 101
-        System.out.println(row);
+//
+//        // select count(id) from discuss_post where status !=2
+//        int rows = discussPostMapper.selectDiscussionPostRows(0);
+//        System.out.println(rows);
+//
+//        // select count(id) from discuss_post where status !=2 and user_id = #{userId}
+//        int row = discussPostMapper.selectDiscussionPostRows(102);
+//        // select count(id) from discuss_post where status !=2 and user_id = 101
+//        System.out.println(row);
     }
 
 

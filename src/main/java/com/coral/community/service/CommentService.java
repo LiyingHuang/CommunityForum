@@ -30,8 +30,10 @@ public class CommentService implements CommunityConstant {
 
     @Autowired
     private SensitiveFilter sensitiveFilter;
+
     @Autowired
     private DiscussPostService discussPostService;
+
     // with Transaction
     @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
     public int addComment(Comment comment){
@@ -48,5 +50,9 @@ public class CommentService implements CommunityConstant {
             discussPostService.updateCommentCount(comment.getEntityId(),count);
         }
         return rows;
+    }
+
+    public Comment findCommentById(int id){
+        return commentMapper.selectCommentById(id);
     }
 }

@@ -23,4 +23,7 @@ public interface CommentMapper {
     // add comment
     int insertComment(Comment comment);
 
+
+    // findCommentById
+    Comment selectCommentById(int id);
 }

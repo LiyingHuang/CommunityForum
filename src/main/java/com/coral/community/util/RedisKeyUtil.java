@@ -9,6 +9,7 @@ public class RedisKeyUtil {
 
     private static final String PREFIX_FOLLOWEE = "followee";
     private static final String PREFIX_FOLLOWER = "follower";
+    private static final String PREFIX_USER = "user";
 
     // Like of a Entity(/Post/Comment/Reply)
     // like:entity:entityType:entityId -> set(userId)
@@ -34,4 +35,44 @@ public class RedisKeyUtil {
     public static String getFollowerKey(int entityType, int entityId){
         return PREFIX_FOLLOWER + SPLIT + entityType + SPLIT + entityId;
     }
+
+
+
+/*
+---------------------------------------Optimize Login Process with Redis--------------------------------------------
+
+*   1. Store the verification code with Redis
+      * verificationCode need frequently access and refresh, need to have a great performance
+      *  Don't need store it for a long time, will inactive in a short time
+      *  Avoid the shared session problem when Distribution Deployment
+
+*  2. Store the log ticket with Redis
+      * we will check the log ticket when handle each request, high frequency
+
+*  3. Cache the user information
+      * check the user information according to the log ticket for each request, high frequency
+
+* */
+
+
+    private static final String PREFIX_KAPTCHA = "kaptcha";
+    // Login verification Code
+    public static String getKaptchaKey(String owner){
+        return PREFIX_KAPTCHA + SPLIT + owner;
+    }
+
+    private static final String PREFIX_TICKET = "ticket";
+
+    public static String getTicketKey(String ticket){
+        return PREFIX_TICKET+SPLIT+ticket;
+    }
+    // loginTicketMapper: SET it as unrecommended (@Deprecated)
+
+
+    // 3. user
+    public static String getUserKey(int userId){
+        return PREFIX_USER+SPLIT+userId;
+    }
+
+
 }

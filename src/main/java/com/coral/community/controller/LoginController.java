@@ -3,12 +3,15 @@ package com.coral.community.controller;
 import com.coral.community.entity.User;
 import com.coral.community.service.UserService;
 import com.coral.community.util.CommunityConstant;
+import com.coral.community.util.CommunityUtil;
+import com.coral.community.util.RedisKeyUtil;
 import com.google.code.kaptcha.Producer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -23,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class LoginController implements CommunityConstant {
@@ -85,8 +89,10 @@ public class LoginController implements CommunityConstant {
         return "/site/operate-result";
     }
 
-
+    /*--------------------------------------------------getKaptcha()---------------------------------------------------*/
     // the generate picture will be used in the client, but the code should be saved in the server with session
+
+    /*
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
     @Autowired
     private Producer kaptchaProducer;
@@ -96,9 +102,48 @@ public class LoginController implements CommunityConstant {
         String text = kaptchaProducer.createText();
         // 2.  create picture with verification code
         BufferedImage image = kaptchaProducer.createImage(text);
-
         // 3. verification code store in session
         session.setAttribute("kaptcha", text);
+        // 4. picture send to browser. need declare the type of output
+        response.setContentType("image/png");
+        try {
+            OutputStream os = response.getOutputStream();
+            ImageIO.write(image, "png", os); // dont need close, spring will do that
+        } catch (IOException e) {
+            logger.error("response verification code Failure: " + e.getMessage());
+        }
+    }
+    */
+
+    // Reconstruct the getKaptcha() Method
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    @Autowired
+    private Producer kaptchaProducer;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
+    public void getKaptcha(HttpServletResponse response/*, HttpSession session*/){
+        // 1. create verification code
+        String text = kaptchaProducer.createText();
+        // 2.  create picture with verification code
+        BufferedImage image = kaptchaProducer.createImage(text);
+
+        // 3. verification code store in session
+        // session.setAttribute("kaptcha", text);
+
+        // a. 验证码的归属
+        // 先在未登录的时候，通过随机码区分不同的用户
+        // 后端随机生成一段验证码，传给在登录页面的客户端，客户端用cookie保存，用来区分不同的用户
+        String kaptchaOwner = CommunityUtil.generateUUID();
+        Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
+        cookie.setMaxAge(60);
+        cookie.setPath(contextPath);
+        response.addCookie(cookie);
+        // b. save verification code to Redis
+        String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+        redisTemplate.opsForValue().set(redisKey,text,60, TimeUnit.SECONDS);
 
         // 4. picture send to browser. need declare the type of output
         response.setContentType("image/png");
@@ -110,7 +155,6 @@ public class LoginController implements CommunityConstant {
         }
     }
 
-
     /* ---------------------------------Login(Post)--------------------------------------------- */
 
     @Value("${server.servlet.context-path}")
@@ -118,8 +162,14 @@ public class LoginController implements CommunityConstant {
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public String login(String username, String password,String code, boolean rememberMe,
-                        Model model, HttpSession session, HttpServletResponse response){    // code: verificationCode
-        String kaptcha = (String) session.getAttribute("kaptcha");
+                        Model model, /*HttpSession session,*/ HttpServletResponse response,
+                        @CookieValue("kaptchaOwner") String kaptchaOwner){    // code: verificationCode
+        /*String kaptcha = (String) session.getAttribute("kaptcha");*/
+        String kaptcha = null;
+        if(StringUtils.isNoneBlank(kaptchaOwner)){
+            String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+            kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+        }
         if(StringUtils.isBlank(kaptcha)  || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)){
             model.addAttribute("codeMsg","Verification Code Incorrect!");
             return "/site/login";

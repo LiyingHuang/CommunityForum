@@ -32,6 +32,7 @@
         <if test="userId!=0">          -- concat the userId
             and user_id = #{userId}
         </if>
+
     </select>
 
 <!--    add Post with ajax and Jquery-->
