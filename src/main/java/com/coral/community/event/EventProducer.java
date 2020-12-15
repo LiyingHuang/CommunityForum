@@ -14,7 +14,8 @@ public class EventProducer {
 
     // Handel Event
     public void fireEvent(Event event){
-        // send the event to the specific topic
+
+        // send the event to the specific topic/queueName
         kafkaTemplate.send(event.getTopic(), JSONObject.toJSONString(event));
     }
 }

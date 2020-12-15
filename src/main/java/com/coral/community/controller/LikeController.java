@@ -31,7 +31,6 @@ public class LikeController implements CommunityConstant {
     @Autowired
     private EventProducer eventProducer;
 
-
     @LoginRequired
     @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody
