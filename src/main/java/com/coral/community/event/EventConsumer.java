@@ -1,8 +1,11 @@
 package com.coral.community.event;
 
 import com.alibaba.fastjson.JSONObject;
+import com.coral.community.entity.DiscussPost;
 import com.coral.community.entity.Event;
 import com.coral.community.entity.Message;
+import com.coral.community.service.DiscussPostService;
+import com.coral.community.service.ElasticsearchService;
 import com.coral.community.service.MessageService;
 import com.coral.community.util.CommunityConstant;
 import com.coral.community.util.CommunityUtil;
@@ -28,6 +31,12 @@ public class EventConsumer implements CommunityConstant {
 
     @Autowired
     private KafkaTemplate kafkaTemplate;
+
+    @Autowired
+    DiscussPostService discussPostService;
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
 
     @KafkaListener(topics = {TOPIC_COMMENT,TOPIC_FOLLOW,TOPIC_LIKE})
     public void handleCommentMethod(ConsumerRecord record){
@@ -69,5 +78,25 @@ public class EventConsumer implements CommunityConstant {
         message.setContent(JSONObject.toJSONString(content));
         messageService.addMessage(message);
 
+    }
+
+    // Consume Post Event
+    @KafkaListener(topics = {TOPIC_PUBLISH})
+    public void handlePublishMessage(ConsumerRecord record) {
+        if(record == null || record.value() == null){
+            logger.error("Record Content is Empty!");
+            return;
+        }
+
+        // record -> event
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+
+        if(event == null){
+            logger.error("Message Format Incorrect! ");
+        }
+
+        // save post to Es
+        DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
+        elasticsearchService.saveDiscussPost(post);
     }
 }

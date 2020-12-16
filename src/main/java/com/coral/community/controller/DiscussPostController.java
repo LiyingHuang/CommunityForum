@@ -1,9 +1,8 @@
 package com.coral.community.controller;
 
-import com.coral.community.entity.Comment;
-import com.coral.community.entity.DiscussPost;
-import com.coral.community.entity.Page;
-import com.coral.community.entity.User;
+import ch.qos.logback.core.encoder.EchoEncoder;
+import com.coral.community.entity.*;
+import com.coral.community.event.EventProducer;
 import com.coral.community.service.CommentService;
 import com.coral.community.service.DiscussPostService;
 import com.coral.community.service.LikeService;
@@ -26,8 +25,21 @@ import java.util.*;
 public class DiscussPostController implements CommunityConstant {
     @Autowired
     private DiscussPostService discussPostService;
+
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private LikeService likeService;
+
+    @Autowired
+    private EventProducer eventProducer;
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     @ResponseBody
@@ -44,6 +56,14 @@ public class DiscussPostController implements CommunityConstant {
         discussPost.setCreateTime(new Date());
         discussPostService.addDisscussPost(discussPost);
 
+        // fire the Post Event
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(discussPost.getId());
+        eventProducer.fireEvent(event);
+
         // error msg will handle in the future
         return CommunityUtil.getJSONString(0,"post success! ");
     }
@@ -57,14 +77,6 @@ public class DiscussPostController implements CommunityConstant {
     *  * reuse header
     *  * show the post title, user, post_time,content
     * */
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private CommentService commentService;
-
-    @Autowired
-    private LikeService likeService;
 
     @RequestMapping(path = "/detail/{discussPostId}", method = RequestMethod.GET)
     public String getDiscussPost(@PathVariable("discussPostId") int discussPostId, Model model, Page page){

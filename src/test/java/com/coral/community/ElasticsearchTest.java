@@ -48,7 +48,6 @@ public class ElasticsearchTest {
     @Autowired
     private ElasticsearchTemplate elasticTemplate;
 
-
     @Test
     public void testInsert(){
         // DiscussPostRepository extends ElasticsearchRepository

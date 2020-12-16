@@ -59,9 +59,20 @@ public class CommentController implements CommunityConstant {
             event.setEntityUserId(target.getUserId());
         }
 
-        eventProducer.fireEvent(event);
+
         // current thread will send the event to the queue
         // then the messageQueue will handle the next part
+        eventProducer.fireEvent(event);
+
+        if(comment.getEntityType() == ENTITY_TYPE_POST){
+            // fire the Post Event
+            event = new Event()
+                    .setTopic(TOPIC_PUBLISH)
+                    .setUserId(comment.getUserId())
+                    .setEntityType(ENTITY_TYPE_POST)
+                    .setEntityId(discussPostId);
+            eventProducer.fireEvent(event);
+        }
 
         return "redirect:/discuss/detail/"+discussPostId;
     }

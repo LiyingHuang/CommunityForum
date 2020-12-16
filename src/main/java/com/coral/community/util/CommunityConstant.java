@@ -29,8 +29,13 @@ public interface CommunityConstant {
     String TOPIC_COMMENT = "comment";
     String TOPIC_LIKE = "like";
     String TOPIC_FOLLOW = "follow";
+    /*Post Event*/
+    String TOPIC_PUBLISH = "publish";
+
 
     /*System UserId */
     int SYSTEM_USER_ID = 1;
+
+
 
 }
