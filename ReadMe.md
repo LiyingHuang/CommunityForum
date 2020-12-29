@@ -24,7 +24,7 @@ Mybatis,Redis to interacted with database and Kafka to build system notification
 
 * Spring Boot
 * **Spring**
-* Spring MVC、Spring Mybatis、**Spring Security**
+* Spring MVC、Spring Mybatis
 * Authority
   * Registration, login, logout, status, settings, authorization
   * Spring Email、**Interceptor**
